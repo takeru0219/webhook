@@ -1,0 +1,58 @@
+# https://runble1.com/github-actions-cloudrun-gcr/
+
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  IMAGE: gcr.io/${{ secrets.GCP_PROJECT_ID }}/test-image:${{ github.sha }}
+  SERVICE_NAME: test-cloudrun
+  PORT: 8080
+  GCP_REGION: us-central1
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # リポジトリをチェックアウト
+      - name: "Checkout the repository"
+        uses: actions/checkout@v2
+
+      # GCP 認証
+      - id: "auth"
+        uses: "google-github-actions/auth@v0"
+        with:
+          credentials_json: $GCP_CREDENTIALS
+
+      # gcloud コマンドの設定
+      - name: "Set up Cloud SDK"
+        uses: "google-github-actions/setup-gcloud@v0"
+
+      # Docker に gcloud コマンドの Credential を使わせる
+      - name: "Configure docker to use the gcloud cli"
+        run: gcloud auth configure-docker --quiet
+
+      # Docker イメージを作成
+      - name: "Build a docker image"
+        run: docker build -t $IMAGE .
+
+      # Docker イメージを Container Registry に Push
+      - name: "Push the docker image to Container Registry"
+        run: docker push $IMAGE
+
+      # Container Registry から Cloud Run へデプロイ
+      - name: "Deploy to Cloud Run"
+        run: |
+          gcloud run deploy $SERVICE_NAME \
+            --image $IMAGE \
+            --port $PORT \
+            --project $GCP_PROJECT_ID \
+            --region $GCP_REGION \
+            --platform=managed \
+            --allow-unauthenticated \
+            --quiet
