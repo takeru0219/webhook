@@ -35,8 +35,8 @@ def get_nikkeitrend() -> list[Article]:
             ret_articles.append(Article(
                 title=processedtitle,
                 link='http://www.nikkei.com' + article_data.find('a').get('href'),
-                issuedate=issued_at.date(),
-                issuetime=issued_time,
+                issueDate=issued_at.date(),
+                issueTime=issued_time,
             ))
 
     return ret_articles
