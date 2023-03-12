@@ -20,11 +20,6 @@ def post_articles(
 
     now = datetime.now(timezone(timedelta(hours=9)))
     slack.notify(
-        text=f"""
-        {source}（日本時間{now.hour}時）
-        ```
-        {text.strip()}
-        ```
-        """,
+        text=f"""{source}（日本時間{now.hour}時）\n{text.strip()}""",
         source=source,
     )
