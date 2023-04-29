@@ -1,5 +1,4 @@
 import datetime as dt
-import re
 import requests
 
 from bs4 import BeautifulSoup
@@ -18,7 +17,9 @@ def get_asahitrend() -> list[Article]:
     ret_articles = []
 
     for i, article_data in enumerate(data_array):
+        # 10位まで取得
         if i < 10:
+            # タイトルとリンクを取得
             title = article_data.find('a').text
             link = article_data.find('a').get('href')
 

@@ -20,27 +20,21 @@ def base_function(fn, source_name: str):
     """
     try:
         data = fn()
-        post_articles(
-            data,
-            source_name)
+        post_articles(data, source_name)
         return Response(status_code=status.HTTP_200_OK)
     except Exception as e:
         return Response(e, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 @router.get('/nikkei')
 def nikkei_ranking():
-    base_function(
-        get_nikkeitrend,
-        '日本経済新聞 電子版'
-    )
+    base_function(get_nikkeitrend, '日本経済新聞 電子版')
 
 
 @router.get('/asahi')
 def asahi_ranking():
-    base_function(
-        get_asahitrend,
-        '朝日新聞'
-    )
+    base_function(get_asahitrend, '朝日新聞')
+
 
 @router.get('/nishinippon')
 def nishinippon_ranking():

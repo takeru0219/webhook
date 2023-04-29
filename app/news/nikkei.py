@@ -20,7 +20,7 @@ def get_nikkeitrend() -> list[Article]:
     for i, article_data in enumerate(data_array):
         if i < 10:
             rawtitle = article_data.find(class_='m-miM32_itemTitleText').text.strip().replace('\u3000', ' ')
-            processedtitle = re.sub('［.+］', '', rawtitle)
+            processed_title = re.sub('［.+］', '', rawtitle)
 
             issued_at = article_data.find(class_='m-miM32_itemDate').text
             # ネット記事の場合は「yyyy/mm/dd HH:MM」新聞記事の場合は「yyyy/mm/dd付」
@@ -33,7 +33,7 @@ def get_nikkeitrend() -> list[Article]:
                 issued_time = issued_at.time()
 
             ret_articles.append(Article(
-                title=processedtitle,
+                title=processed_title,
                 link='http://www.nikkei.com' + article_data.find('a').get('href'),
                 issueDate=issued_at.date(),
                 issueTime=issued_time,
