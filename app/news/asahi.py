@@ -3,14 +3,11 @@ import requests
 
 from bs4 import BeautifulSoup
 from app.type import Article
+from app.news import scrape
 
 
-def get_asahitrend() -> list[Article]:
-    # 取得 -> BeautifulSoupに渡す
-    url = 'https://www.asahi.com/whatsnew/ranking/'
-    response = requests.get(url)
-
-    soup = BeautifulSoup(response.content, 'html.parser')
+def get_asahi_trend() -> list[Article]:
+    soup = scrape('https://www.asahi.com/whatsnew/ranking/')
 
     # soup内の処理
     data_array = soup.find_all(class_='Ranking')[0].find_all('dd')
@@ -29,7 +26,8 @@ def get_asahitrend() -> list[Article]:
             if raw_issued_at_candidate:
                 # 発行日時が取れなかった時の処理
                 raw_issued_at = raw_issued_at_candidate.text
-                issued_at = dt.datetime.strptime(raw_issued_at, '%Y年%m月%d日 %H時%M分')
+                issued_at = dt.datetime.strptime(
+                    raw_issued_at, '%Y年%m月%d日 %H時%M分')
             else:
                 issued_at = None
 

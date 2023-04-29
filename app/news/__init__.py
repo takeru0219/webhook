@@ -1,11 +1,10 @@
-from fastapi import APIRouter, status
+import requests
+from bs4 import BeautifulSoup
+
+from fastapi import status
 from fastapi.responses import Response
 
-from app.news.nikkei import get_nikkeitrend
-from app.news.asahi import get_asahitrend
 from app.slack.post import post_articles
-
-router = APIRouter(prefix='/news')
 
 
 def base_function(fn, source_name: str):
@@ -26,21 +25,16 @@ def base_function(fn, source_name: str):
         return Response(e, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@router.get('/nikkei')
-def nikkei_ranking():
-    base_function(get_nikkeitrend, '日本経済新聞 電子版')
+def scrape(url: str) -> BeautifulSoup:
+    """ URLをもとに、スクレイピングした結果を返す
 
+    Args:
+        url (str): スクレイピングしたいURL
 
-@router.get('/asahi')
-def asahi_ranking():
-    base_function(get_asahitrend, '朝日新聞')
+    Returns:
+        BeautifulSoup: スクレイピングした結果
+    """
+    url = 'https://www.asahi.com/whatsnew/ranking/'
+    response = requests.get(url)
 
-
-@router.get('/nishinippon')
-def nishinippon_ranking():
-    pass
-
-
-@router.get('/nytimes_chinese')
-def nytimes_chinese_ranking():
-    pass
+    return BeautifulSoup(response.content, 'html.parser')

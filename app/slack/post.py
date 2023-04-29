@@ -16,7 +16,7 @@ def post_articles(
     for article in articles:
         formatted_date = article.issueDate if article.issueDate else '不明'
         formatted_time = article.issueTime if article.issueTime else ''
-        text += f'<{article.link}|{article.title.strip()}> ({formatted_date} {formatted_time})\n'
+        text += f'<{article.link}|{article.title.strip()}> ({formatted_date} {formatted_time})'.strip() + '\n'
 
     now = datetime.now(timezone(timedelta(hours=9)))
     slack.notify(

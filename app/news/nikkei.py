@@ -4,14 +4,11 @@ import requests
 
 from bs4 import BeautifulSoup
 from app.type import Article
+from app.news import scrape
 
 
-def get_nikkeitrend() -> list[Article]:
-    # 取得 -> BeautifulSoupに渡す
-    url = 'https://www.nikkei.com/access/'
-    response = requests.get(url)
-
-    soup = BeautifulSoup(response.content, 'html.parser')
+def get_nikkei_trend() -> list[Article]:
+    soup = scrape('https://www.nikkei.com/access/')
 
     # soup内の処理
     data_array = soup.find_all(class_='m-miM32_item')
@@ -19,7 +16,8 @@ def get_nikkeitrend() -> list[Article]:
 
     for i, article_data in enumerate(data_array):
         if i < 10:
-            rawtitle = article_data.find(class_='m-miM32_itemTitleText').text.strip().replace('\u3000', ' ')
+            rawtitle = article_data.find(
+                class_='m-miM32_itemTitleText').text.strip().replace('\u3000', ' ')
             processed_title = re.sub('［.+］', '', rawtitle)
 
             issued_at = article_data.find(class_='m-miM32_itemDate').text
@@ -34,7 +32,8 @@ def get_nikkeitrend() -> list[Article]:
 
             ret_articles.append(Article(
                 title=processed_title,
-                link='http://www.nikkei.com' + article_data.find('a').get('href'),
+                link='http://www.nikkei.com' +
+                article_data.find('a').get('href'),
                 issueDate=issued_at.date(),
                 issueTime=issued_time,
             ))
