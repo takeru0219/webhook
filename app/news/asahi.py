@@ -28,7 +28,8 @@ def get_asahitrend() -> list[Article]:
             if raw_issued_at_candidate:
                 # 発行日時が取れなかった時の処理
                 raw_issued_at = raw_issued_at_candidate.text
-                issued_at = dt.datetime.strptime(raw_issued_at, '%Y年%m月%d日 %H時%M分')
+                issued_at = dt.datetime.strptime(
+                    raw_issued_at, '%Y年%m月%d日 %H時%M分')
             else:
                 issued_at = None
 

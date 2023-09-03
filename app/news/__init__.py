@@ -3,7 +3,7 @@ from fastapi.responses import Response
 
 from app.news.nikkei import get_nikkeitrend
 from app.news.asahi import get_asahitrend
-from app.slack.post import post_articles
+from app.slack import post_articles
 
 router = APIRouter(prefix='/news')
 
@@ -27,12 +27,14 @@ def base_function(fn, source_name: str):
     except Exception as e:
         return Response(e, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 @router.get('/nikkei')
 def nikkei_ranking():
     base_function(
         get_nikkeitrend,
         '日本経済新聞 電子版'
     )
+    return Response(status_code=status.HTTP_200_OK)
 
 
 @router.get('/asahi')
@@ -41,6 +43,8 @@ def asahi_ranking():
         get_asahitrend,
         '朝日新聞'
     )
+    return Response(status_code=status.HTTP_200_OK)
+
 
 @router.get('/nishinippon')
 def nishinippon_ranking():
